@@ -1,8 +1,8 @@
 import { BaseEntity, Column, DeleteDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class AbstractUUidModel extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   createdAt: Date;

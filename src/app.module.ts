@@ -1,10 +1,12 @@
 import { Module } from "@nestjs/common";
-import { StrapiApiModule } from "./strapi-api/strapi-api.module";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import config from './config';
 import { DBLogger } from './utils/db-logger';
 import { BullModule } from '@nestjs/bull';
 import { RedisModule } from '@songkeys/nestjs-redis';
+import { ScheduleTasksModule } from './schedule-tasks/schedule-tasks.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { MailOperationsModule } from './mail-operations/mail-operations.module';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { RedisModule } from '@songkeys/nestjs-redis';
         host: config.REDIS_HOST,
         port: config.REDIS_PORT,
         password: config.REDIS_PASSWORD,
+        db: config.REDIS_DB,
       },
       defaultJobOptions: {
         removeOnComplete: true,
@@ -44,10 +47,15 @@ import { RedisModule } from '@songkeys/nestjs-redis';
         host: config.REDIS_HOST,
         port: config.REDIS_PORT,
         password: config.REDIS_PASSWORD,
+        db: config.REDIS_DB,
       },
     }),
 
-    StrapiApiModule,
+    ScheduleModule.forRoot(),
+
+    ScheduleTasksModule,
+
+    MailOperationsModule.forRoot(),
   ],
 })
 export class AppModule {

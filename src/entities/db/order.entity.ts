@@ -1,13 +1,18 @@
 import { AbstractModel } from './abstract-model';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { EOrderStatus } from '../enums/order-status.enum';
 
-@Entity()
+@Entity('orders')
 export class OrderEntity extends AbstractModel {
   @Column()
-  emailId: number;
+  emailAccountId: number;
 
   @Column()
   domain: string;
 
-  // TODO: Add other fields
+  @Column('timestamp with time zone')
+  endAt: Date;
+
+  @Column({ default: EOrderStatus.Wait })
+  status: EOrderStatus;
 }

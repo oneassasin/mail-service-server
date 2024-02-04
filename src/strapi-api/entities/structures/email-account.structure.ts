@@ -1,4 +1,6 @@
 import { EmailProviderStructure } from './email-provider.structure';
+import { GeoStructure } from './geo.structure';
+import { StrapiDataResponseStructure } from './strapi-data-response.structure';
 
 export class EmailAccountStructure {
   address: string;
@@ -7,11 +9,11 @@ export class EmailAccountStructure {
 
   date_birth: string;
 
-  email_provider?: EmailProviderStructure;
+  email_provider?: StrapiDataResponseStructure<EmailProviderStructure>;
 
   name?: string;
 
   last_name?: string;
 
-  geo?: number;
+  geo?: StrapiDataResponseStructure<GeoStructure>;
 }

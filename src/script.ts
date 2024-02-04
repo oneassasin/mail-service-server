@@ -22,11 +22,11 @@ async function main() {
 
   const lock = await client.getMailboxLock('INBOX');
   try {
-    const message = await client.fetchOne(`${(client.mailbox as MailboxObject).exists}`, { source: true });
+    const message = await client.fetchOne(`${(client.mailbox as MailboxObject)}`, { source: true });
     const parsedMessage = await simpleParser(message.source, { skipImageLinks: false });
     debugger;
   } finally {
-    lock.release;
+    lock.release();
   }
 
   await client.logout();

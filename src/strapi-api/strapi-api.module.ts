@@ -9,6 +9,9 @@ import { StrapiApiService } from './strapi-api.service';
   providers: [
     StrapiApiService,
   ],
+  exports: [
+    StrapiApiService,
+  ]
 })
 export class StrapiApiModule {
 }
