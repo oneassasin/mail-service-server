@@ -1,0 +1,46 @@
+image: docker:stable
+
+services:
+  - lordgaav/dind-options:latest
+
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: mail-service-server
+  REGISTRY_LOGIN: virgofisherman
+  DOCKER_HOST: "tcp://lordgaav__dind-options:2375"
+  DOCKER_DRIVER: overlay2
+
+before_script:
+  - apk add --no-cache git openssh-client bash
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh && chmod 700 ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  - docker login $REGISTRY_HOST -p $REGISTRY_PASSWORD -u $REGISTRY_LOGIN
+
+build_prod:
+  stage: build
+  only:
+    - master
+  variables:
+    REGISTRY_HOST: registry.moby-proxy.com
+  script:
+    - docker pull $REGISTRY_HOST/$IMAGE_NAME:latest || true
+    - docker build --cache-from $REGISTRY_HOST/$IMAGE_NAME:latest --tag $REGISTRY_HOST/$IMAGE_NAME:$CI_JOB_ID --tag $REGISTRY_HOST/$IMAGE_NAME:latest .
+    - docker push $REGISTRY_HOST/$IMAGE_NAME:$CI_JOB_ID
+    - docker push $REGISTRY_HOST/$IMAGE_NAME:latest
+
+deploy_prod:
+  stage: deploy
+  only:
+    - master
+  variables:
+    NODE_ENV: PRODUCTION
+    SSH_HOST: user@moby-proxy.com
+    REGISTRY_HOST: registry.moby-proxy.com
+    DEPLOY_ADDITIONAL_ARGS: ""
+  script:
+    - chmod +x ./deploy.bash
+    - ./deploy.bash
