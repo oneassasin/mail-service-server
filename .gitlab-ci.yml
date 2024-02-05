@@ -23,7 +23,7 @@ before_script:
 build_prod:
   stage: build
   only:
-    - master
+    - main
   variables:
     REGISTRY_HOST: registry.moby-proxy.com
   script:
@@ -35,7 +35,7 @@ build_prod:
 deploy_prod:
   stage: deploy
   only:
-    - master
+    - main
   variables:
     NODE_ENV: PRODUCTION
     SSH_HOST: user@moby-proxy.com
