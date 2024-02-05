@@ -20,8 +20,6 @@
     "@nestjs/schedule": "4.0.0",
     "@nestjs/typeorm": "10.0.1",
     "@songkeys/nestjs-redis": "10.0.0",
-    "@types/bull": "4.10.0",
-    "@types/helmet": "4.0.0",
     "@types/imapflow": "1.0.17",
     "@types/mailparser": "3.4.4",
     "bull": "4.12.2",

@@ -6,7 +6,7 @@ for i in 0 1 2
 do
   ssh $SSH_HOST "(docker stop ${IMAGE_NAME}_mail_worker_${i} || true) && (docker rm ${IMAGE_NAME}_mail_worker_${i} || true)"
   ssh $SSH_HOST "docker run -d --name ${IMAGE_NAME}_mail_worker_${i} --restart=always \
-    -e NODE_ENV=$NODE_ENV -p 300$((4 + i)):3000 \
+    -e NODE_ENV=$NODE_ENV \
     -e DB_URI=$DB_URI \
     -e REDIS_HOST=$REDIS_HOST \
     -e REDIS_PASSWORD=$REDIS_PASSWORD \
@@ -17,7 +17,7 @@ done
 
 ssh $SSH_HOST "(docker stop ${IMAGE_NAME}_api || true) && (docker rm ${IMAGE_NAME}_api || true)"
 ssh $SSH_HOST "docker run -d --name ${IMAGE_NAME}_api --restart=always \
-  -e NODE_ENV=$NODE_ENV \
+  -e NODE_ENV=$NODE_ENV -p 3004:3000 \
   -e DB_URI=$DB_URI \
   -e REDIS_HOST=$REDIS_HOST \
   -e REDIS_DB=$REDIS_DB \
