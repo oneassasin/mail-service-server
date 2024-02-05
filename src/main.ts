@@ -10,10 +10,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 const RateLimit = require('express-rate-limit');
 
 async function bootstrap() {
-  if (config.INSTANCE_TYPE === 'api') {
+  if (['all', 'api'].includes(config.INSTANCE_TYPE)) {
     await startApiInstance();
   } else {
-    const app = await NestFactory.createApplicationContext(AppModule, {});
+    const app = await NestFactory.createApplicationContext(AppModule.forRoot(), {});
 
     app.useLogger(config.ENV === 'PRODUCTION' ? ['error', 'warn', 'log'] : ['error', 'warn', 'log', 'debug']);
   }
@@ -21,7 +21,7 @@ async function bootstrap() {
 
 async function startApiInstance() {
   const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
+    AppModule.forRoot(),
     {
       cors: {
         origin: true,
@@ -47,4 +47,4 @@ async function startApiInstance() {
   app.use(csurf());
 }
 
-bootstrap();
+bootstrap().catch(console.error);

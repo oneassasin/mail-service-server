@@ -41,6 +41,10 @@ export class MailOperationsProcessor {
   private async handleOrder(order: OrderEntity) {
     do {
       await order.reload()
+      if ([EOrderStatus.NotReceived, EOrderStatus.Canceled].includes(order.status)) {
+        return;
+      }
+
       await this.lockerService.updateLock(order);
 
       const isReceived = await this.mailOperationsService.checkMailsForOrder(order);

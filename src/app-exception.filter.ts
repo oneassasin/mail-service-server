@@ -8,6 +8,16 @@ export class AppExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    response.json({ error: exception.name, message: exception.message });
+    if (exception.name.includes('Bad') || exception.message.includes('Bad')) {
+      exception.name = 'Error';
+      exception.message = 'SYSTEM_ERROR';
+    }
+
+    if (exception.name !== 'Error') {
+      exception.name = 'Error';
+      exception.message = 'SYSTEM_ERROR';
+    }
+
+    response.json({ status: exception.name, value: exception.message });
   }
 }

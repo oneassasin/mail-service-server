@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import config from './config';
 import { DBLogger } from './utils/db-logger';
@@ -7,6 +7,9 @@ import { RedisModule } from '@songkeys/nestjs-redis';
 import { ScheduleTasksModule } from './schedule-tasks/schedule-tasks.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MailOperationsModule } from './mail-operations/mail-operations.module';
+import { ApiModule } from './api/api.module';
+import { APP_FILTER } from '@nestjs/core';
+import { AppExceptionFilter } from './app-exception.filter';
 
 @Module({
   imports: [
@@ -52,11 +55,39 @@ import { MailOperationsModule } from './mail-operations/mail-operations.module';
     }),
 
     ScheduleModule.forRoot(),
-
-    ScheduleTasksModule,
-
-    MailOperationsModule.forRoot(),
   ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AppExceptionFilter,
+    },
+  ]
 })
 export class AppModule {
+  static forRoot(): DynamicModule {
+    const imports = [];
+
+    if (['all', 'mail-worker'].includes(config.INSTANCE_TYPE)) {
+      imports.push(...[
+        MailOperationsModule.forRoot()
+      ]);
+    }
+
+    if (['all', 'schedule'].includes(config.INSTANCE_TYPE)) {
+      imports.push(...[
+        ScheduleTasksModule,
+      ]);
+    }
+
+    if (['all', 'api'].includes(config.INSTANCE_TYPE)) {
+      imports.push(...[
+        ApiModule,
+      ]);
+    }
+
+    return {
+      module: AppModule,
+      imports,
+    };
+  }
 }
