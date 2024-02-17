@@ -21,6 +21,8 @@ export class StrapiApiService {
     const params = {
       'pagination[pageSize]': pageSize,
       'pagination[page]': page,
+      'filters[is_confirmed]': true,
+      'filters[is_banned]': false,
     };
 
     if (mailProviderId) {
